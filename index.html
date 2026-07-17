@@ -1,45 +1,472 @@
-const CACHE = 'plate-hunt-iphone-v1';
-const APP_SHELL = [
-  './',
-  './index.html',
-  './manifest.webmanifest',
-  './assets/index-CEz6iGNh.js',
-  './assets/index-CJ6ZoqQs.css',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-maskable-512.png',
-  './icons/apple-touch-icon.png',
-  './splash/iphone-11.png',
-  './splash/iphone-14.png',
-  './splash/iphone-15-pro-max.png',
-  './splash/iphone-15-pro.png',
-  './splash/iphone-se.png'
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#071b45">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Plate Hunt">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>Plate Hunt</title>
+<style>
+:root{
+  --navy:#071b45;--navy2:#0d347e;--blue:#1778f2;--sky:#7bd9ff;--teal:#12bfa3;
+  --green:#20b96e;--green2:#dff8e9;--gold:#ffc43d;--orange:#ff8a2a;--red:#e44848;
+  --paper:#fff;--ink:#10233f;--muted:#6a7c93;--line:#d8e6f7;--mist:#eff6ff;
+  --shadow:0 18px 40px rgba(5,24,68,.20);--radius:24px;
+}
+*{box-sizing:border-box}
+html{background:var(--navy);min-height:100%}
+body{
+  margin:0;min-height:100%;color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 10% -10%,rgba(123,217,255,.52),transparent 24rem),
+    radial-gradient(circle at 95% 0%,rgba(255,196,61,.25),transparent 22rem),
+    linear-gradient(180deg,#1d78ea 0,#0c357e 46%,#061737 100%);
+}
+button,input{font:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible{outline:3px solid rgba(255,196,61,.45);outline-offset:2px}
+.app{width:min(100%,760px);margin:auto;min-height:100vh;padding-bottom:92px}
+.topbar{
+  position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
+  min-height:calc(66px + env(safe-area-inset-top));
+  padding:calc(12px + env(safe-area-inset-top)) 16px 10px;
+  color:#fff;background:linear-gradient(180deg,rgba(5,24,68,.96),rgba(8,37,94,.88));
+  backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.08)
+}
+.brand small{display:block;color:#9edcff;font-size:.64rem;font-weight:900;letter-spacing:.18em}
+.brand strong{display:block;font-size:1.55rem;letter-spacing:-.045em;text-transform:uppercase}
+.round-btn{width:42px;height:42px;border:0;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.13);color:#fff}
+.round-btn svg{width:22px;height:22px}
+main{padding:14px}
+.view{display:none}.view.active{display:block;animation:enter .18s ease-out}
+@keyframes enter{from{opacity:.55;transform:translateY(4px)}}
+.hero{
+  overflow:hidden;position:relative;border-radius:30px;padding:18px;
+  background:linear-gradient(180deg,#2a9df6 0,#1761cf 50%,#0c327f 100%);
+  color:#fff;box-shadow:var(--shadow);margin-bottom:14px
+}
+.hero:before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 78% 18%,#ffe16e 0 7%,transparent 7.5%),
+    linear-gradient(160deg,transparent 0 45%,rgba(255,255,255,.15) 46% 47%,transparent 48%),
+    linear-gradient(20deg,transparent 0 55%,rgba(255,255,255,.12) 56% 57%,transparent 58%);
+  pointer-events:none
+}
+.mountain{
+  position:absolute;left:-5%;right:-5%;bottom:118px;height:94px;opacity:.9;
+  background:
+    linear-gradient(145deg,transparent 0 42%,#d8f2ff 43% 54%,transparent 55%) 0 0/40% 100%,
+    linear-gradient(215deg,transparent 0 44%,#bfe6ff 45% 58%,transparent 59%) 30% 0/42% 100%,
+    linear-gradient(145deg,transparent 0 44%,#e7f7ff 45% 60%,transparent 61%) 62% 0/42% 100%;
+}
+.road{
+  position:absolute;left:-10%;right:-10%;bottom:0;height:135px;
+  background:linear-gradient(170deg,transparent 0 32%,#102346 33% 100%);
+}
+.road:after{
+  content:"";position:absolute;left:42%;top:38%;width:8px;height:78px;
+  background:repeating-linear-gradient(180deg,#ffd64f 0 11px,transparent 11px 22px);transform:rotate(8deg)
+}
+.car{position:absolute;right:25px;bottom:47px;font-size:3.3rem;filter:drop-shadow(0 10px 9px rgba(0,0,0,.35));z-index:2}
+.hero-head{position:relative;z-index:3;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.hero h1{margin:0;font-size:2.15rem;line-height:.95;letter-spacing:-.06em;text-transform:uppercase;text-shadow:0 4px 12px rgba(0,0,0,.18)}
+.tag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:8px 11px;background:var(--gold);color:#442900;font-weight:900;font-size:.72rem;box-shadow:0 8px 15px rgba(0,0,0,.16)}
+.progress-card{
+  position:relative;z-index:3;margin-top:115px;padding:16px;border-radius:22px;background:#fff;color:var(--ink);
+  box-shadow:0 14px 28px rgba(0,0,0,.18)
+}
+.progress-top{display:flex;justify-content:space-between;gap:14px;align-items:center}
+.count{font-size:3.2rem;font-weight:1000;color:#103a98;line-height:.95}.count span{font-size:1.35rem;color:#6681b9}
+.progress-label{font-size:1.15rem;font-weight:950;margin-top:5px}
+.trip-name{max-width:145px;text-align:right;color:var(--muted);font-size:.76rem;font-weight:800}
+.track{height:14px;margin-top:13px;background:#dcecff;border-radius:999px;overflow:hidden;border:2px solid #c9e0ff}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--teal),#35d78e,#56b5ff);border-radius:inherit;transition:width .35s ease}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+.stat{padding:11px 8px;border-radius:16px;background:#0b2c73;color:#fff;text-align:center}
+.stat strong{display:block;font-size:1.35rem}.stat span{display:block;color:#bdd7ff;font-size:.68rem;margin-top:3px}
+.action-row{position:relative;z-index:3;display:flex;gap:9px;margin-top:13px}
+.primary,.secondary,.danger,.text-btn,.chip,.nav-btn,.state-row,.map-cell,.trip-card,.bonus-card,.achievement{
+  border:0;border-radius:17px;font-weight:900
+}
+.primary{flex:1;padding:14px 16px;background:linear-gradient(180deg,#ffd75c,#ffb91d);color:#3d2500;box-shadow:0 10px 18px rgba(255,185,29,.25)}
+.secondary{padding:14px 16px;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.17)}
+.card{background:var(--paper);border-radius:var(--radius);padding:17px;margin-bottom:14px;box-shadow:var(--shadow)}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}
+.kicker{margin:0 0 4px;color:#1453aa;font-size:.65rem;font-weight:1000;letter-spacing:.16em}
+.section-head h2{margin:0;font-size:1.3rem;letter-spacing:-.035em}
+.text-btn{padding:9px 11px;background:var(--mist);color:#1551a6;font-size:.75rem}
+.plate-wall{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.plate{
+  position:relative;overflow:hidden;min-height:83px;padding:15px 10px 10px;border-radius:15px;
+  background:linear-gradient(180deg,#fff,#edf7ff);border:3px solid #153b79;box-shadow:inset 0 0 0 2px #fff
+}
+.plate:before,.plate:after{content:"";position:absolute;top:7px;width:6px;height:6px;border-radius:50%;background:#7589a3}
+.plate:before{left:8px}.plate:after{right:8px}
+.plate small{display:block;text-align:center;color:#d85a28;font-size:.62rem;font-weight:900;text-transform:uppercase}
+.plate strong{display:block;text-align:center;font-size:1.05rem;letter-spacing:.05em;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plate b{position:absolute;right:7px;bottom:5px;padding:4px 7px;border-radius:999px;background:var(--gold);font-size:.65rem}
+.empty{grid-column:1/-1;text-align:center;padding:22px;color:var(--muted)}
+.search{display:flex;align-items:center;gap:9px;background:var(--mist);border:1px solid var(--line);padding:0 12px;border-radius:15px;min-height:47px}
+.search input{flex:1;border:0;outline:0;background:transparent;color:var(--ink)}
+.filters{display:flex;gap:7px;overflow:auto;padding:11px 0 2px}
+.chip{padding:8px 12px;background:var(--mist);color:#58749f;white-space:nowrap}
+.chip.active{background:var(--navy2);color:#fff}
+.checklist{display:grid;gap:8px}
+.state-row{
+  width:100%;display:flex;align-items:center;gap:11px;text-align:left;padding:11px;
+  background:#f7fbff;border:1px solid var(--line);color:var(--ink)
+}
+.state-row.found{background:var(--green2);border-color:#9fe1bd}
+.check{
+  width:27px;height:27px;border-radius:50%;border:2px solid #b7c8df;background:#fff;display:grid;place-items:center;color:transparent;font-weight:1000
+}
+.state-row.found .check{background:var(--green);border-color:#11874e;color:#fff}
+.state-code{width:48px;height:32px;border:3px solid #173b76;border-radius:8px;background:#fff;display:grid;place-items:center;color:#12356c;font-size:.76rem}
+.state-copy{flex:1;min-width:0}.state-copy strong{display:block}.state-copy span{display:block;color:var(--muted);font-size:.71rem;margin-top:3px}
+.tabs{display:flex;gap:7px;background:var(--mist);padding:6px;border-radius:16px;margin-bottom:13px}
+.tab{flex:1;border:0;border-radius:12px;padding:10px;background:transparent;color:#5e779c;font-weight:900}
+.tab.active{background:var(--navy2);color:#fff}
+.map-scroll{overflow:auto;padding-bottom:4px}
+.map-grid{display:grid;grid-template-columns:repeat(12,minmax(54px,1fr));gap:7px;min-width:730px}
+.map-cell{
+  min-height:56px;padding:5px;background:#e8f1ff;border:2px solid #cfe0f5;color:#173b70;
+  display:flex;flex-direction:column;align-items:center;justify-content:center
+}
+.map-cell.blank{visibility:hidden;pointer-events:none}
+.map-cell.found{background:linear-gradient(180deg,#32cb82,#19a960);border-color:#0e8a4f;color:#fff;box-shadow:0 0 0 3px rgba(50,203,130,.16)}
+.map-cell em{font-style:normal;font-size:.56rem;margin-top:3px;opacity:.78;text-align:center}
+.bonus-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.bonus-card{padding:11px;background:#f5faff;border:2px dashed #bdd3ef;text-align:left;color:var(--ink)}
+.bonus-card.found{background:var(--green2);border-style:solid;border-color:#9fe1bd}
+.bonus-card strong{display:block;font-size:.82rem}.bonus-card span{display:block;color:var(--muted);font-size:.67rem;margin-top:5px}
+.trip-list,.settings-list,.achievement-grid{display:grid;gap:9px}
+.trip-card{padding:13px;background:#f6faff;border:1px solid var(--line);text-align:left;color:var(--ink)}
+.trip-card.active{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+.trip-card strong{display:block}.trip-card span{display:block;color:var(--muted);font-size:.72rem;margin-top:4px}
+.trip-actions{display:flex;gap:8px;margin-top:10px}
+.trip-actions button{flex:1;border:0;border-radius:12px;padding:9px;font-weight:900}
+.trip-actions .resume{background:var(--navy2);color:#fff}.trip-actions .report{background:var(--mist);color:#1551a6}
+.achievement-grid{grid-template-columns:repeat(2,1fr)}
+.achievement{padding:14px;text-align:center;background:#f5f7fb;border:1px solid var(--line);color:#8a98a9}
+.achievement.earned{background:linear-gradient(180deg,#fff7c6,#ffe48a);color:#705300;border-color:#f0c94c}
+.achievement .icon{font-size:1.7rem}.achievement strong{display:block;margin-top:7px}.achievement span{display:block;font-size:.68rem;margin-top:4px}
+.setting{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border-radius:16px;background:#f5faff;border:1px solid var(--line)}
+.setting strong{display:block}.setting p{margin:4px 0 0;color:var(--muted);font-size:.72rem}
+.toggle{width:50px;height:29px;border-radius:999px;border:0;background:#b8c7da;padding:3px;transition:.2s}
+.toggle:after{content:"";display:block;width:23px;height:23px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 5px rgba(0,0,0,.2)}
+.toggle.on{background:var(--blue)}.toggle.on:after{transform:translateX(21px)}
+.full-btn{width:100%;border:0;border-radius:15px;padding:12px;font-weight:900;background:var(--mist);color:#1453aa}
+.full-btn.danger{background:#fff0f0;color:#c93131}
+.install-box{padding:14px;border-radius:18px;background:linear-gradient(180deg,#0d347e,#071b45);color:#fff}
+.install-box ol{margin:10px 0 0;padding-left:20px;color:#d7e8ff;font-size:.82rem;line-height:1.6}
+.bottom-nav{
+  position:fixed;left:50%;bottom:0;z-index:35;transform:translateX(-50%);width:min(100%,760px);
+  display:grid;grid-template-columns:repeat(5,1fr);gap:4px;
+  padding:7px 7px max(8px,env(safe-area-inset-bottom));
+  background:rgba(5,20,52,.96);backdrop-filter:blur(18px);border-top:1px solid rgba(255,255,255,.08)
+}
+.nav-btn{min-height:61px;background:transparent;color:#b9d3ff;display:grid;place-items:center;gap:3px;font-size:.67rem}
+.nav-btn svg{width:21px;height:21px}.nav-btn.active{color:var(--gold);background:rgba(255,255,255,.07)}
+.fab{
+  position:fixed;right:max(18px,calc((100vw - 760px)/2 + 18px));bottom:92px;z-index:34;
+  width:58px;height:58px;border:0;border-radius:50%;background:linear-gradient(180deg,#ffd65a,#ffad16);
+  color:#3b2400;font-size:1.65rem;font-weight:1000;box-shadow:0 12px 24px rgba(0,0,0,.28)
+}
+.sheet{
+  border:0;padding:0;width:min(100%,760px);max-width:none;margin:auto 0 0;
+  border-radius:26px 26px 0 0;background:#fff;color:var(--ink);max-height:86vh;overflow:hidden
+}
+.sheet::backdrop{background:rgba(3,13,34,.68);backdrop-filter:blur(3px)}
+.sheet-inner{padding:12px 15px calc(18px + env(safe-area-inset-bottom));max-height:86vh;overflow:auto}
+.handle{width:44px;height:5px;border-radius:999px;background:#ccd7e5;margin:0 auto 11px}
+.sheet-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.sheet-head h3{margin:0;font-size:1.25rem}
+.close{width:36px;height:36px;border:0;border-radius:50%;background:var(--mist);color:#254d80;font-weight:900}
+.quick-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:11px}
+.quick-item{border:1px solid var(--line);border-radius:15px;background:#f7fbff;padding:10px;text-align:left;color:var(--ink)}
+.quick-item.found{background:var(--green2);border-color:#9fe1bd}
+.quick-item strong{display:block}.quick-item span{display:block;color:var(--muted);font-size:.68rem;margin-top:3px}
+.detail-actions{display:grid;gap:8px;margin-top:12px}.detail-actions button{border:0;border-radius:14px;padding:12px;font-weight:900}
+.detail-actions .again{background:var(--navy2);color:#fff}.detail-actions .remove{background:#fff0f0;color:#bd3030}
+.toast{
+  position:fixed;left:50%;bottom:95px;z-index:60;transform:translate(-50%,18px);
+  width:min(calc(100% - 30px),500px);padding:13px;border-radius:16px;background:#071b45;color:#fff;
+  text-align:center;font-weight:900;opacity:0;pointer-events:none;transition:.2s;box-shadow:var(--shadow)
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.celebrate{
+  position:fixed;inset:0;z-index:70;display:none;place-items:center;background:rgba(5,20,52,.76);backdrop-filter:blur(8px)
+}
+.celebrate.show{display:grid}
+.celebrate-card{width:min(calc(100% - 36px),430px);padding:24px;border-radius:28px;background:#fff;text-align:center;box-shadow:var(--shadow)}
+.celebrate-card .big{font-size:3.2rem}.celebrate-card h3{font-size:1.6rem;margin:8px 0 4px}.celebrate-card p{color:var(--muted)}
+@media(min-width:620px){
+  .plate-wall{grid-template-columns:repeat(3,1fr)}
+  .quick-list{grid-template-columns:repeat(3,1fr)}
+  .achievement-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <button class="round-btn" aria-label="Settings" onclick="activeView='moreView';render()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.8 1.8 0 0 0 .4 2l.1.1-2.8 2.8-.1-.1a1.8 1.8 0 0 0-2-.4 1.8 1.8 0 0 0-1 1.6v.2h-4V21a1.8 1.8 0 0 0-1-1.6 1.8 1.8 0 0 0-2 .4l-.1.1-2.8-2.8.1-.1a1.8 1.8 0 0 0 .4-2A1.8 1.8 0 0 0 3 14H3v-4h.2a1.8 1.8 0 0 0 1.6-1 1.8 1.8 0 0 0-.4-2l-.1-.1 2.8-2.8.1.1a1.8 1.8 0 0 0 2 .4A1.8 1.8 0 0 0 10 3V3h4v.2a1.8 1.8 0 0 0 1 1.6 1.8 1.8 0 0 0 2-.4l.1-.1 2.8 2.8-.1.1a1.8 1.8 0 0 0-.4 2 1.8 1.8 0 0 0 1.6 1H21v4h-.2a1.8 1.8 0 0 0-1.4 1Z"/></svg></button>
+  <div class="brand"><small>ADVENTURE AWAITS</small><strong>Plate Hunt</strong></div>
+  <button class="round-btn" aria-label="Log a plate" onclick="document.getElementById('logSheet').showModal()">＋</button>
+</header>
+<main>
+<section id="homeView" class="view active">
+  <div class="hero">
+    <div class="mountain"></div><div class="road"></div><div class="car">🚙</div>
+    <div class="hero-head"><div><h1>Collect<br>Them All</h1></div><span class="tag">📴 Offline Ready</span></div>
+    <div class="progress-card">
+      <div class="progress-top"><div><div class="count"><b id="homeCount">0</b><span>/50</span></div><div class="progress-label">States Found!</div></div><div class="trip-name" id="homeTrip">First Adventure</div></div>
+      <div class="track"><div class="fill" id="homeFill"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:7px;color:var(--muted);font-size:.72rem;font-weight:800"><span>Journey progress</span><strong id="homePct">0%</strong></div>
+      <div class="stats">
+        <article class="stat"><strong id="statTotal">0</strong><span>Sightings</span></article>
+        <article class="stat"><strong id="statLeft">50</strong><span>States Left</span></article>
+        <article class="stat"><strong id="statBonus">0/3</strong><span>Bonuses</span></article>
+      </div>
+    </div>
+    <div class="action-row"><button class="primary" id="heroLog">＋ Log a Plate</button><button class="secondary" onclick="activeView='mapView';render()">View Map</button></div>
+  </div>
+  <div class="card">
+    <div class="section-head"><div><p class="kicker">RECENT FINDS</p><h2>License Plate Wall</h2></div><button class="text-btn" onclick="activeView='checkView';render()">Checklist</button></div>
+    <div class="plate-wall" id="plateWall"></div>
+  </div>
+</section>
+
+<section id="checkView" class="view">
+  <div class="card">
+    <div class="section-head"><div><p class="kicker">CHECK-OFF MODE</p><h2>Plate Checklist</h2></div></div>
+    <div class="tabs"><button class="tab active" id="statesTab">U.S. States</button><button class="tab" id="bonusTab">Bonus Plates</button></div>
+    <div class="checklist" id="stateChecklist"></div><div class="checklist" id="bonusChecklist"></div>
+  </div>
+</section>
+
+<section id="mapView" class="view">
+  <div class="card">
+    <div class="section-head"><div><p class="kicker">VISUAL TRACKER</p><h2>Your U.S. Map</h2></div></div>
+    <p style="color:var(--muted);font-size:.8rem;margin-top:-3px">Tap a state to log it. Found states turn green.</p>
+    <div class="map-scroll"><div class="map-grid" id="mapGrid"></div></div>
+    <div class="section-head" style="margin-top:16px"><div><p class="kicker">BONUS DESTINATIONS</p><h2>Extra Finds</h2></div></div>
+    <div class="bonus-grid" id="bonusMap"></div>
+  </div>
+</section>
+
+<section id="tripsView" class="view">
+  <div class="card">
+    <div class="section-head"><div><p class="kicker">YOUR ADVENTURES</p><h2>Trips</h2></div><button class="text-btn" id="newTrip">New Trip</button></div>
+    <div class="trip-list" id="tripList"></div>
+  </div>
+</section>
+
+<section id="moreView" class="view">
+  <div class="card">
+    <div class="section-head"><div><p class="kicker">ACHIEVEMENTS</p><h2>Adventure Badges</h2></div></div>
+    <div class="achievement-grid" id="achievements"></div>
+  </div>
+  <div class="card">
+    <div class="section-head"><div><p class="kicker">APP SETTINGS</p><h2>Controls & Backup</h2></div></div>
+    <div class="settings-list">
+      <div class="setting"><div><strong>Sound</strong><p>Play a quick confirmation tone.</p></div><button class="toggle on" id="soundToggle" aria-label="Toggle sound"></button></div>
+      <div class="setting"><div><strong>Haptics</strong><p>Vibrate briefly after a find.</p></div><button class="toggle on" id="hapticToggle" aria-label="Toggle haptics"></button></div>
+      <button class="full-btn" id="exportBtn">Export Backup</button>
+      <label class="full-btn" style="display:block;text-align:center">Import Backup<input id="importInput" type="file" accept="application/json" hidden></label>
+      <button class="full-btn danger" id="resetBtn">Reset Active Trip</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="install-box"><strong>Install on iPhone</strong><ol><li>Open this site in Safari.</li><li>Tap the Share button.</li><li>Choose “Add to Home Screen.”</li><li>Tap Add.</li></ol></div>
+  </div>
+</section>
+</main>
+
+<button class="fab" id="openLog" aria-label="Log a plate">＋</button>
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-view="homeView"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m15 9-2 4-4 2 2-4 4-2Z"/></svg><span>Hunt</span></button>
+  <button class="nav-btn" data-view="checkView"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="m8 9 2 2 4-4M8 15h8"/></svg><span>Checklist</span></button>
+  <button class="nav-btn" data-view="mapView"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z"/><path d="M9 3v15M15 6v15"/></svg><span>Map</span></button>
+  <button class="nav-btn" data-view="tripsView"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 19c-2 0-3-1.5-3-3s1-3 3-3h12c2 0 3-1.5 3-3s-1-3-3-3H8"/><circle cx="6" cy="19" r="2"/><circle cx="8" cy="7" r="2"/></svg><span>Trips</span></button>
+  <button class="nav-btn" data-view="moreView"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg><span>More</span></button>
+</nav>
+</div>
+
+<dialog class="sheet" id="logSheet">
+  <div class="sheet-inner"><div class="handle"></div>
+    <div class="sheet-head"><div><p class="kicker">FAST ENTRY</p><h3>Log a Plate</h3></div><button class="close" id="closeLog">✕</button></div>
+    <label class="search">🔎<input id="quickSearch" type="search" placeholder="Search state, bonus, or code"></label>
+    <div class="filters"><button class="chip active" data-filter="all">All</button><button class="chip" data-filter="missing">Missing</button><button class="chip" data-filter="found">Found</button><button class="chip" data-filter="bonus">Bonus</button></div>
+    <div class="quick-list" id="quickList"></div>
+  </div>
+</dialog>
+
+<dialog class="sheet" id="detailSheet">
+  <div class="sheet-inner"><div class="handle"></div>
+    <div class="sheet-head"><div><p class="kicker">PLATE DETAILS</p><h3 id="detailTitle">State</h3></div><button class="close" id="detailClose">✕</button></div>
+    <p id="detailText" style="color:var(--muted)"></p>
+    <div class="detail-actions"><button class="again" id="detailAgain">Log Another Sighting</button><button class="remove" id="detailRemove">Remove Latest Sighting</button></div>
+  </div>
+</dialog>
+
+<div class="celebrate" id="celebrate"><div class="celebrate-card"><div class="big">🎉</div><h3>New Plate Found!</h3><p id="celebrateName">Florida</p><button class="primary" style="width:100%" id="celebrateClose">Keep Hunting</button></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const STATES=[["AL","Alabama"],["AK","Alaska"],["AZ","Arizona"],["AR","Arkansas"],["CA","California"],["CO","Colorado"],["CT","Connecticut"],["DE","Delaware"],["FL","Florida"],["GA","Georgia"],["HI","Hawaii"],["ID","Idaho"],["IL","Illinois"],["IN","Indiana"],["IA","Iowa"],["KS","Kansas"],["KY","Kentucky"],["LA","Louisiana"],["ME","Maine"],["MD","Maryland"],["MA","Massachusetts"],["MI","Michigan"],["MN","Minnesota"],["MS","Mississippi"],["MO","Missouri"],["MT","Montana"],["NE","Nebraska"],["NV","Nevada"],["NH","New Hampshire"],["NJ","New Jersey"],["NM","New Mexico"],["NY","New York"],["NC","North Carolina"],["ND","North Dakota"],["OH","Ohio"],["OK","Oklahoma"],["OR","Oregon"],["PA","Pennsylvania"],["RI","Rhode Island"],["SC","South Carolina"],["SD","South Dakota"],["TN","Tennessee"],["TX","Texas"],["UT","Utah"],["VT","Vermont"],["VA","Virginia"],["WA","Washington"],["WV","West Virginia"],["WI","Wisconsin"],["WY","Wyoming"]];
+const BONUSES=[["ON","Ontario"],["PR","Puerto Rico"],["VI","U.S. Virgin Islands"]];
+const ALL=[...STATES,...BONUSES],STATE_CODES=new Set(STATES.map(x=>x[0])),BONUS_CODES=new Set(BONUSES.map(x=>x[0]));
+const MAP=[
+[null,null,null,null,"WA","MT","ND","MN","WI","MI","VT","ME"],
+[null,null,null,"OR","ID","WY","SD","IA","IL","IN","NY","NH"],
+[null,null,"CA","NV","UT","CO","NE","MO","KY","OH","PA","NJ"],
+["AK",null,"AZ","NM","KS","AR","TN","WV","VA","MD","DE","CT"],
+[null,null,null,null,"OK","LA","MS","AL","NC","SC",null,"RI"],
+[null,null,null,"HI","TX",null,null,"GA",null,"FL",null,null]
 ];
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(APP_SHELL)));
-  self.skipWaiting();
-});
-self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))));
-  self.clients.claim();
-});
-self.addEventListener('message', event => {
-  if (event.data === 'SKIP_WAITING') self.skipWaiting();
-});
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  if (event.request.mode === 'navigate') {
-    event.respondWith(fetch(event.request).then(response => {
-      const clone = response.clone();
-      caches.open(CACHE).then(cache => cache.put('./index.html', clone));
-      return response;
-    }).catch(() => caches.match('./index.html')));
-    return;
+const KEY="plateHuntCleanV1";
+const defaultData={activeTripId:null,trips:[],sightings:[],settings:{sound:true,haptics:true},version:1};
+let data=load(),activeView="homeView",checkMode="states",quickFilter="all",quickSearch="",detailCode=null;
+const $=id=>document.getElementById(id);
+function uid(){return Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8)}
+function nameOf(code){return ALL.find(x=>x[0]===code)?.[1]||code}
+function load(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(KEY));
+    if(saved&&Array.isArray(saved.trips)&&Array.isArray(saved.sightings))return {...structuredClone(defaultData),...saved,settings:{...defaultData.settings,...(saved.settings||{})}};
+  }catch{}
+  const first={id:uid(),name:"First Adventure",startedAt:new Date().toISOString(),status:"active"};
+  return {...structuredClone(defaultData),activeTripId:first.id,trips:[first]};
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(data))}
+function trip(){return data.trips.find(t=>t.id===data.activeTripId)||data.trips[0]}
+function sightings(tripId=trip()?.id){return data.sightings.filter(s=>s.tripId===tripId)}
+function counts(tripId=trip()?.id){return sightings(tripId).reduce((a,s)=>(a[s.code]=(a[s.code]||0)+1,a),{})}
+function unique(set,tripId=trip()?.id){const c=counts(tripId);return [...set].filter(x=>c[x]).length}
+function fmt(v){return new Intl.DateTimeFormat(undefined,{month:"short",day:"numeric",year:"numeric"}).format(new Date(v))}
+function escapeHtml(v=""){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),1900)}
+function feedback(){
+  if(data.settings.haptics&&navigator.vibrate)navigator.vibrate(35);
+  if(data.settings.sound){
+    try{
+      const ctx=new (window.AudioContext||window.webkitAudioContext)(),o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);o.frequency.value=660;g.gain.setValueAtTime(.06,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.13);o.start();o.stop(ctx.currentTime+.13);
+    }catch{}
   }
-  event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
-    if (!response || response.status !== 200 || response.type === 'opaque') return response;
-    const clone = response.clone();
-    caches.open(CACHE).then(cache => cache.put(event.request, clone));
-    return response;
-  })));
-});
+}
+function render(){
+  renderHome();renderChecklist();renderMap();renderTrips();renderMore();renderQuick();
+  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===activeView));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===activeView));
+}
+function renderHome(){
+  const c=counts(),stateCount=unique(STATE_CODES),bonusCount=unique(BONUS_CODES),total=sightings().length,pct=Math.round(stateCount/50*100);
+  $("homeCount").textContent=stateCount;$("homePct").textContent=pct+"%";$("homeFill").style.width=pct+"%";
+  $("homeTrip").textContent=trip()?.name||"No trip";$("statTotal").textContent=total;$("statLeft").textContent=50-stateCount;$("statBonus").textContent=bonusCount+"/3";
+  const rec=[...sightings()].sort((a,b)=>b.time.localeCompare(a.time)).slice(0,6);
+  $("plateWall").innerHTML=rec.length?rec.map(s=>`<div class="plate"><small>${escapeHtml(nameOf(s.code))}</small><strong>${escapeHtml(nameOf(s.code).toUpperCase())}</strong><b>${s.code}</b></div>`).join(""):`<div class="empty"><strong>No plates yet.</strong><br>Tap “Log a Plate” to start collecting.</div>`;
+}
+function renderChecklist(){
+  const c=counts();
+  $("stateChecklist").innerHTML=STATES.map(([code,name])=>stateRow(code,name,!!c[code])).join("");
+  $("bonusChecklist").innerHTML=BONUSES.map(([code,name])=>stateRow(code,name,!!c[code])).join("");
+  $("stateChecklist").style.display=checkMode==="states"?"grid":"none";$("bonusChecklist").style.display=checkMode==="bonus"?"grid":"none";
+  $("statesTab").classList.toggle("active",checkMode==="states");$("bonusTab").classList.toggle("active",checkMode==="bonus");
+  document.querySelectorAll(".state-row").forEach(b=>b.onclick=()=>handleRegionTap(b.dataset.code));
+}
+function stateRow(code,name,found){
+  const count=counts()[code]||0;
+  return `<button class="state-row ${found?"found":""}" data-code="${code}"><span class="check">${found?"✓":""}</span><span class="state-code">${code}</span><span class="state-copy"><strong>${escapeHtml(name)}</strong><span>${found?count+" sighting"+(count===1?"":"s"):"Tap when spotted"}</span></span></button>`;
+}
+function renderMap(){
+  const c=counts();
+  $("mapGrid").innerHTML=MAP.flat().map(code=>code?`<button class="map-cell ${c[code]?"found":""}" data-code="${code}"><strong>${code}</strong><em>${escapeHtml(nameOf(code))}</em></button>`:`<div class="map-cell blank"></div>`).join("");
+  $("bonusMap").innerHTML=BONUSES.map(([code,name])=>`<button class="bonus-card ${c[code]?"found":""}" data-code="${code}"><strong>${escapeHtml(name)}</strong><span>${c[code]?"Found":"Missing"} • ${code}</span></button>`).join("");
+  document.querySelectorAll(".map-cell[data-code],.bonus-card[data-code]").forEach(b=>b.onclick=()=>handleRegionTap(b.dataset.code));
+}
+function renderTrips(){
+  $("tripList").innerHTML=data.trips.map(t=>{
+    const sc=unique(STATE_CODES,t.id),bc=unique(BONUS_CODES,t.id),tot=sightings(t.id).length;
+    return `<article class="trip-card ${t.id===data.activeTripId?"active":""}"><strong>${escapeHtml(t.name)}</strong><span>${fmt(t.startedAt)} • ${sc}/50 states • ${bc}/3 bonuses • ${tot} sightings</span><div class="trip-actions"><button class="report" data-report="${t.id}">Report</button>${t.id!==data.activeTripId?`<button class="resume" data-resume="${t.id}">Resume</button>`:""}</div></article>`;
+  }).join("");
+  document.querySelectorAll("[data-resume]").forEach(b=>b.onclick=()=>{data.activeTripId=b.dataset.resume;save();render();toast("Trip resumed")});
+  document.querySelectorAll("[data-report]").forEach(b=>b.onclick=()=>showReport(b.dataset.report));
+}
+function renderMore(){
+  const sc=unique(STATE_CODES),bc=unique(BONUS_CODES),tot=sightings().length;
+  const badges=[
+    ["🚗","First Find","Log your first plate",tot>=1],
+    ["🧭","Explorer","Find 10 states",sc>=10],
+    ["🛣️","Road Warrior","Find 25 states",sc>=25],
+    ["👑","State Master","Find all 50 states",sc>=50],
+    ["⭐","Bonus Hunter","Find all 3 bonuses",bc>=3],
+    ["🏆","Century Club","Log 100 sightings",tot>=100]
+  ];
+  $("achievements").innerHTML=badges.map(x=>`<article class="achievement ${x[3]?"earned":""}"><div class="icon">${x[0]}</div><strong>${x[1]}</strong><span>${x[2]}</span></article>`).join("");
+  $("soundToggle").classList.toggle("on",data.settings.sound);$("hapticToggle").classList.toggle("on",data.settings.haptics);
+}
+function renderQuick(){
+  const c=counts(),q=quickSearch.toLowerCase().trim();
+  const list=ALL.filter(([code,name])=>{
+    const found=!!c[code],bonus=BONUS_CODES.has(code);
+    return (!q||code.toLowerCase().includes(q)||name.toLowerCase().includes(q))&&(quickFilter==="all"||(quickFilter==="found"&&found)||(quickFilter==="missing"&&!found)||(quickFilter==="bonus"&&bonus));
+  });
+  $("quickList").innerHTML=list.map(([code,name])=>`<button class="quick-item ${c[code]?"found":""}" data-code="${code}"><strong>${code} — ${escapeHtml(name)}</strong><span>${c[code]?c[code]+" logged":"Tap to log"}${BONUS_CODES.has(code)?" • Bonus":""}</span></button>`).join("");
+  document.querySelectorAll(".quick-item").forEach(b=>b.onclick=()=>addSighting(b.dataset.code,true));
+}
+function addSighting(code,closeSheet=false){
+  const first=!counts()[code];
+  data.sightings.push({id:uid(),tripId:trip().id,code,time:new Date().toISOString()});
+  save();feedback();render();
+  if(closeSheet)$("logSheet").close();
+  if(first){$("celebrateName").textContent=nameOf(code);$("celebrate").classList.add("show")}else toast(nameOf(code)+" logged again");
+}
+function handleRegionTap(code){
+  if(!counts()[code])return addSighting(code);
+  detailCode=code;$("detailTitle").textContent=nameOf(code);$("detailText").textContent=(counts()[code]||0)+" sighting"+(counts()[code]===1?"":"s")+" on this trip.";$("detailSheet").showModal();
+}
+function removeLatest(){
+  const found=[...sightings()].filter(s=>s.code===detailCode).sort((a,b)=>b.time.localeCompare(a.time));
+  if(!found.length)return;
+  data.sightings=data.sightings.filter(s=>s.id!==found[0].id);save();$("detailSheet").close();render();toast("Latest sighting removed");
+}
+function newTrip(){
+  const value=prompt("Name this trip:","New Road Trip");
+  if(!value)return;
+  data.trips.forEach(t=>{if(t.status==="active")t.status="paused"});
+  const t={id:uid(),name:value.trim()||"New Road Trip",startedAt:new Date().toISOString(),status:"active"};
+  data.trips.unshift(t);data.activeTripId=t.id;save();render();toast("New trip started");
+}
+function showReport(id){
+  const t=data.trips.find(x=>x.id===id),sc=unique(STATE_CODES,id),bc=unique(BONUS_CODES,id),tot=sightings(id).length;
+  alert(`${t.name}\n\n${sc}/50 states\n${bc}/3 bonuses\n${tot} total sightings`);
+}
+function exportBackup(){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a"),url=URL.createObjectURL(blob);
+  a.href=url;a.download="plate-hunt-backup.json";a.click();URL.revokeObjectURL(url)
+}
+function importBackup(file){
+  if(!file)return;
+  const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.trips)||!Array.isArray(d.sightings))throw 0;data={...structuredClone(defaultData),...d,settings:{...defaultData.settings,...(d.settings||{})}};save();render();toast("Backup restored")}catch{alert("That is not a valid Plate Hunt backup.")}};r.readAsText(file)
+}
+document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>{activeView=b.dataset.view;render();window.scrollTo({top:0,behavior:"smooth"})});
+$("openLog").onclick=()=>$("logSheet").showModal();$("heroLog").onclick=()=>$("logSheet").showModal();$("closeLog").onclick=()=>$("logSheet").close();
+$("quickSearch").oninput=e=>{quickSearch=e.target.value;renderQuick()};
+document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{quickFilter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));renderQuick()});
+$("statesTab").onclick=()=>{checkMode="states";renderChecklist()};$("bonusTab").onclick=()=>{checkMode="bonus";renderChecklist()};
+$("detailAgain").onclick=()=>{addSighting(detailCode);$("detailSheet").close()};$("detailRemove").onclick=removeLatest;$("detailClose").onclick=()=>$("detailSheet").close();
+$("celebrateClose").onclick=()=>$("celebrate").classList.remove("show");$("newTrip").onclick=newTrip;
+$("soundToggle").onclick=()=>{data.settings.sound=!data.settings.sound;save();renderMore()};$("hapticToggle").onclick=()=>{data.settings.haptics=!data.settings.haptics;save();renderMore()};
+$("exportBtn").onclick=exportBackup;$("importInput").onchange=e=>importBackup(e.target.files[0]);
+$("resetBtn").onclick=()=>{if(confirm("Reset the active trip's sightings?")){data.sightings=data.sightings.filter(s=>s.tripId!==trip().id);save();render();toast("Active trip reset")}};
+if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+render();
+</script>
+</body>
+</html>
