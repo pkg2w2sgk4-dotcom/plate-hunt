@@ -1,0 +1,72 @@
+{
+  "id": "./",
+  "name": "Plate Hunt \u2014 Road Trip Game",
+  "short_name": "Plate Hunt",
+  "description": "Find every state plate on your road trips. Works offline and keeps each trip private on your iPhone.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "fullscreen"
+  ],
+  "background_color": "#071d4b",
+  "theme_color": "#071d4b",
+  "orientation": "portrait-primary",
+  "categories": [
+    "games",
+    "travel"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Log a Plate",
+      "short_name": "Log Plate",
+      "description": "Open Plate Hunt and log a sighting",
+      "url": "./?action=log",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Open Map",
+      "short_name": "Map",
+      "description": "View your plate map",
+      "url": "./?screen=map",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
